@@ -1,33 +1,47 @@
-import React, { useState } from "react";
+import { useState } from "react"
 
 export default function Chat({ transcript }) {
-  const [msgs, setMsgs] = useState([]);
-  const [q, setQ] = useState("");
+  const [input, setInput] = useState("")
+  const [messages, setMessages] = useState([])
 
-  const ask = async () => {
-    const resp = await fetch("https://api-inference.huggingface.co/models/google/flan-t5-small", {
+  const askAI = async () => {
+    const res = await fetch("https://api-inference.huggingface.co/models/google/flan-t5-base", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${import.meta.env.VITE_HUGGINGFACE_TOKEN}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ inputs: `Transcript: ${transcript}\nQuestion: ${q}` })
-    });
-    const js = await resp.json();
-    const answer = js[0]?.generated_text || "No answer.";
-    setMsgs([...msgs, { q, a: answer }]);
-    setQ("");
-  };
+      body: JSON.stringify({
+        inputs: `Transcript: ${transcript}\n\nQ: ${input}\nA:`
+      })
+    })
+    const data = await res.json()
+    const answer = data[0]?.generated_text || "No answer."
+    setMessages([...messages, { q: input, a: answer }])
+    setInput("")
+  }
 
   return (
-    <div className="space-y-2">
-      <div className="border p-2 h-40 overflow-y-auto bg-gray-100">
-        {msgs.map((m,i)=><div key={i}><strong>You:</strong> {m.q}<br/><strong>AI:</strong> {m.a}</div>)}
+    <div className="w-full max-w-xl mt-6">
+      <div className="space-y-2 mb-4">
+        {messages.map((m, i) => (
+          <div key={i}>
+            <p className="font-semibold">Q: {m.q}</p>
+            <p className="ml-4">A: {m.a}</p>
+          </div>
+        ))}
       </div>
       <div className="flex gap-2">
-        <input className="flex-grow border p-2" value={q} onChange={e=>setQ(e.target.value)} placeholder="Ask about the video…" />
-        <button onClick={ask} className="bg-blue-600 text-white px-4 py-2 rounded">Ask</button>
+        <input
+          className="flex-1 p-2 border rounded text-black"
+          placeholder="Ask something..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
+        <button onClick={askAI} className="bg-blue-500 px-4 text-white rounded">
+          Ask
+        </button>
       </div>
     </div>
-  );
+  )
 }
