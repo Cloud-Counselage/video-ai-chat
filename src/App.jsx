@@ -1,26 +1,26 @@
-import React, { useState } from "react";
-import Transcriber from "./components/Transcriber";
-import VideoPlayer from "./components/VideoPlayer";
-import Chat from "./components/Chat";
+import React, { useState, useEffect } from "react"
+import Navbar from "./components/Navbar"
+import VideoPlayer from "./components/VideoPlayer"
+import Transcriber from "./components/Transcriber"
+import Chat from "./components/Chat"
 
 export default function App() {
-  const [file, setFile] = useState(null);
-  const [src, setSrc] = useState("");
-  const [transcript, setTranscript] = useState("");
+  const [dark, setDark] = useState(false)
+  const [videoUrl, setVideoUrl] = useState(null)
+  const [transcript, setTranscript] = useState("")
 
-  const handleFile = e => {
-    const f = e.target.files[0];
-    setFile(f);
-    setSrc(URL.createObjectURL(f));
-  };
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", dark)
+  }, [dark])
 
   return (
-    <div className="p-4 max-w-xl mx-auto space-y-4">
-      <h1 className="text-2xl font-bold">Video‑AI Chat</h1>
-      <input type="file" accept="video/*" onChange={handleFile} />
-      {src && <VideoPlayer src={src} />}
-      {file && !transcript && <Transcriber file={file} onTranscript={setTranscript} />}
-      {transcript && <Chat transcript={transcript} />}
+    <div>
+      <Navbar dark={dark} toggleDark={() => setDark(!dark)} />
+      <main className="p-4 flex flex-col items-center">
+        <VideoPlayer setVideoUrl={setVideoUrl} />
+        <Transcriber videoUrl={videoUrl} setTranscript={setTranscript} />
+        <Chat transcript={transcript} />
+      </main>
     </div>
-  );
+  )
 }
