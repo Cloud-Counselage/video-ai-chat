@@ -1,15 +1,11 @@
-export default function VideoPlayer({ setVideoUrl }) {
+export default function VideoPlayer() {
   return (
-    <div className="w-full max-w-xl mb-6">
-      <input
-        type="file"
-        accept="video/*"
-        onChange={(e) => {
-          const url = URL.createObjectURL(e.target.files[0])
-          setVideoUrl(url)
-        }}
-        className="mb-2"
-      />
+    <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded shadow">
+      <h2 className="text-lg font-semibold mb-2">Video Player</h2>
+      <video controls className="w-full h-64 bg-black rounded">
+        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
     </div>
-  )
+  );
 }
