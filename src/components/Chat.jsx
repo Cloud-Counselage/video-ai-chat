@@ -6,19 +6,22 @@ export default function Chat({ transcript }) {
 
   const askAI = async () => {
     if (!transcript) {
-      setResponse('Please load a video first.');
+      setResponse('❗ Please load a video first.');
+      return;
+    }
+    if (!question) {
+      setResponse('❗ Please type a question.');
       return;
     }
 
-    setResponse('Thinking...');
+    setResponse('💬 Thinking...');
 
-    // Simulate Hugging Face API call
     const answer = await fakeAI(transcript, question);
     setResponse(answer);
   };
 
   const fakeAI = async (context, question) => {
-    return `Based on transcript "${context.slice(0, 30)}...", AI says: "${question}?" is interesting!`;
+    return `📜 Transcript: "${context.slice(0, 50)}..."\n\n🤖 Answer: "${question}?" sounds great!`;
   };
 
   return (
@@ -39,7 +42,7 @@ export default function Chat({ transcript }) {
           Ask
         </button>
       </div>
-      {response && <p className="mt-4">{response}</p>}
+      {response && <pre className="mt-4 whitespace-pre-wrap">{response}</pre>}
     </div>
   );
 }
