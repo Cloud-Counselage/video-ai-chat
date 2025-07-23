@@ -1,15 +1,24 @@
 import { useState } from 'react';
 
-export default function Chat() {
+export default function Chat({ transcript }) {
   const [question, setQuestion] = useState('');
   const [response, setResponse] = useState('');
 
   const askAI = async () => {
+    if (!transcript) {
+      setResponse('Please load a video first.');
+      return;
+    }
+
     setResponse('Thinking...');
-    // simulate AI response
-    setTimeout(() => {
-      setResponse(`AI says: "${question}?" is a great question!`);
-    }, 1500);
+
+    // Simulate Hugging Face API call
+    const answer = await fakeAI(transcript, question);
+    setResponse(answer);
+  };
+
+  const fakeAI = async (context, question) => {
+    return `Based on transcript "${context.slice(0, 30)}...", AI says: "${question}?" is interesting!`;
   };
 
   return (
